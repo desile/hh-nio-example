@@ -1,0 +1,1 @@
+document.writeln(2+2);
