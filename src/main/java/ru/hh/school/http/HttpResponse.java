@@ -11,21 +11,25 @@ public class HttpResponse {
     private static final String version = "HTTP/1.1";
     private static final String allowedMethods = "GET";
     private HttpResponseCode responseCode;
-    private String contentType;
+    private String contentType = "text/html";
     private MappedByteBuffer content;
-    private String resourcePath;
 
     public HttpResponse(HttpRequest httpRequest){
-        if(!allowedMethods.equals(httpRequest.getMethod())){
+        if(!allowedMethods.equals(httpRequest.getMethod())) {
             responseCode = HttpResponseCode.METHOD_NOT_ALLOWED;
-            contentType = "text/html";
             System.out.println(responseCode);
             return;
         }
 
         String requestedUri = httpRequest.getUri();
+        if(requestedUri.contains("?")){
+            responseCode = HttpResponseCode.BAD_REQUEST;
+            System.out.println(responseCode);
+            return;
+        }
+
         responseCode = HttpResponseCode.OK;
-        resourcePath = ConfigHandler.getProperty(ConfigHandler.RESOURCE_PATH).orElse(".");
+        String resourcePath = ConfigHandler.getProperty(ConfigHandler.RESOURCE_PATH).orElse(".");
         String fileExtension = FilenameUtils.getExtension(requestedUri);
         String filePath = resourcePath + requestedUri;
         try {
@@ -47,7 +51,6 @@ public class HttpResponse {
         } catch (IOException e) {
             e.printStackTrace();
             responseCode = HttpResponseCode.NOT_FOUND;
-            contentType = "text/html";
         } finally {
             System.out.println(responseCode);
         }

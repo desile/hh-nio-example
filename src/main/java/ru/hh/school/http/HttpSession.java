@@ -19,7 +19,12 @@ public class HttpSession {
     }
 
     public String read() throws IOException {
-        fillBuffer();
+        buffer.limit(buffer.capacity());
+        int read = channel.read(buffer);
+        if(read == -1){
+            return "";
+        }
+        buffer.clear();
         return readLinesFromBuffer();
     }
 
@@ -29,15 +34,6 @@ public class HttpSession {
             sb.append((char) buffer.get());
         }
         return sb.toString();
-    }
-
-    private void fillBuffer() throws IOException {
-        buffer.limit(buffer.capacity());
-        int read = channel.read(buffer);
-        if (read == -1) {
-            throw new IOException("End of stream");
-        }
-        buffer.clear();
     }
 
     private void writeLine(String line) throws IOException {

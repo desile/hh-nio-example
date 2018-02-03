@@ -50,7 +50,7 @@ public class HttpServer implements Runnable {
                             }
                             // read request
                             String rawRequest = session.read();
-                            if (!rawRequest.isEmpty()) {
+                            if (!rawRequest.trim().isEmpty()) {
                                 HttpRequest request = new HttpRequest(rawRequest);
                                 HttpResponse response = new HttpResponse(request);
                                 session.sendResponse(response);
