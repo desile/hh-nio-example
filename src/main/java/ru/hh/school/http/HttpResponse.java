@@ -1,15 +1,9 @@
 package ru.hh.school.http;
 
-import com.sun.javafx.scene.shape.PathUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import ru.hh.school.utils.ConfigHandler;
 import ru.hh.school.utils.FileHandler;
-
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 
 public class HttpResponse {
@@ -25,6 +19,7 @@ public class HttpResponse {
         if(!allowedMethods.equals(httpRequest.getMethod())){
             responseCode = HttpResponseCode.METHOD_NOT_ALLOWED;
             contentType = "text/html";
+            System.out.println(responseCode);
             return;
         }
 

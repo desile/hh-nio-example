@@ -1,7 +1,4 @@
-package ru.hh.school;
-
-import ru.hh.school.http.HttpResponse;
-import ru.hh.school.http.HttpResponseCode;
+package ru.hh.school.http;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -16,7 +13,6 @@ public class HttpSession {
     private CharsetEncoder encoder = charset.newEncoder();
     private final SocketChannel channel;
     private final ByteBuffer buffer = ByteBuffer.allocate(2048);
-    private int mark = 0;
 
     public HttpSession(SocketChannel channel) {
         this.channel = channel;
@@ -41,8 +37,7 @@ public class HttpSession {
         if (read == -1) {
             throw new IOException("End of stream");
         }
-        buffer.flip();
-        buffer.position(mark);
+        buffer.clear();
     }
 
     private void writeLine(String line) throws IOException {

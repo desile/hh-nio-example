@@ -2,6 +2,7 @@ package ru.hh.school;
 
 import ru.hh.school.http.HttpRequest;
 import ru.hh.school.http.HttpResponse;
+import ru.hh.school.http.HttpSession;
 import ru.hh.school.utils.ConfigHandler;
 
 import java.io.IOException;
@@ -10,14 +11,10 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 import java.util.Iterator;
 
 public class HttpServer implements Runnable {
 
-    private Charset charset = Charset.forName("UTF-8");
-    private CharsetEncoder encoder = charset.newEncoder();
     private Selector selector = Selector.open();
     private ServerSocketChannel server = ServerSocketChannel.open();
 
@@ -39,26 +36,19 @@ public class HttpServer implements Runnable {
                         continue;
                     }
                     try {
-                        // get a new connection
                         if (key.isAcceptable()) {
-                            // accept them
                             SocketChannel client = server.accept();
-                            // non blocking please
                             client.configureBlocking(false);
-                            // show out intentions
                             client.register(selector, SelectionKey.OP_READ);
-                            // read from the connection
-                        } else if (key.isReadable()) {
-                            //  get the client
+                        } else if (key.isReadable()) { //
                             SocketChannel client = (SocketChannel) key.channel();
-                            // get the session
                             HttpSession session = (HttpSession) key.attachment();
-                            // create it if it doesnt exist
+                            // create session if it doesnt exist
                             if (session == null) {
                                 session = new HttpSession(client);
                                 key.attach(session);
                             }
-                            // get more data
+                            // read request
                             String rawRequest = session.read();
                             if (!rawRequest.isEmpty()) {
                                 HttpRequest request = new HttpRequest(rawRequest);
@@ -72,7 +62,6 @@ public class HttpServer implements Runnable {
 
                         if (key.attachment() instanceof HttpSession) {
                             ((HttpSession) key.attachment()).close();
-                            System.out.println("CLOSED");
                         }
                     }
                 }

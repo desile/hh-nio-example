@@ -5,10 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
-import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -38,7 +35,7 @@ public class FileHandler {
         }
         if(timedMappedByteBuffer == null){
             timedMappedByteBuffer = new TimedMappedByteBuffer();
-            if("true".equals(ConfigHandler.getProperty(ConfigHandler.CACHE).orElse("false"))){
+            if("true".equals(ConfigHandler.getProperty(ConfigHandler.CACHE).orElse("true"))){
                 cacheMap.put(filePath, timedMappedByteBuffer);
             }
         }
