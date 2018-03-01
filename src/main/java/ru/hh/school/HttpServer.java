@@ -1,5 +1,6 @@
 package ru.hh.school;
 
+import ru.hh.school.http.HttpHandler;
 import ru.hh.school.http.HttpRequest;
 import ru.hh.school.http.HttpResponse;
 import ru.hh.school.http.HttpSession;
@@ -17,6 +18,7 @@ public class HttpServer implements Runnable {
 
     private Selector selector = Selector.open();
     private ServerSocketChannel server = ServerSocketChannel.open();
+    private HttpHandler httpHandler = new HttpHandler();
 
     public HttpServer(InetSocketAddress address) throws IOException {
         server.socket().bind(address);
@@ -52,7 +54,7 @@ public class HttpServer implements Runnable {
                             String rawRequest = session.read();
                             if (!rawRequest.trim().isEmpty()) {
                                 HttpRequest request = new HttpRequest(rawRequest);
-                                HttpResponse response = new HttpResponse(request);
+                                HttpResponse response = httpHandler.serveRequest(request);
                                 session.sendResponse(response);
                             }
                             session.close();
